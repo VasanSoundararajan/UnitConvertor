@@ -1,0 +1,61 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Length Converter</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}"/>
+  <script>
+    function update(sel, tar) {
+        const targ = document.getElementById(tar);
+        const option = targ.options;
+        for(let i = 0; i < option.length; i++) {
+            option[i].disabled = (option[i].value === sel);
+        }
+    }
+    function fromhandleFrom() {
+        const frm = document.getElementById('from').value;
+        update(frm, 'to');
+    }
+    function tohandleFrom() {
+        const too = document.getElementById('to').value;
+        update(too, 'from');
+    }
+  </script>
+</head>
+<body>
+    <ul class="top">
+        <li><a href="{% url 'length' %}" class="active">Length</a></li>
+        <li><a href="{% url 'temperature' %}">Temperature</a></li>
+        <li><a href="{% url 'weight' %}">Weight</a></li>
+    </ul>
+    <h2 class="title">Length Converter</h2>
+    {% if result %}
+        <div class='result'>
+        <p>Result: {{ result }}{{ unit }}</p>
+        <a href="{% url 'length' %}">Reset</a>
+        </div>
+    {% else %}
+    <div class='input'>
+        <form method='post'>
+            {% csrf_token %}
+            <label>Value:</label>
+            <input type='text' id='tem' name='le' placeholder="Enter Value" required><br>
+            <label>From:</label>
+            <select id="from" name="from" onchange="fromhandleFrom()">
+                <option value="" disabled selected>Select unit to convert</option>
+                <option value="centi">cm</option>
+                <option value="meter">m</option>
+            </select><br>
+            <label>To:</label>
+            <select id="to" name="to" onchange="tohandleFrom()">
+                <option value="" disabled selected>Select unit to convert</option>
+                <option value="centi">cm</option>
+                <option value="meter">m</option>
+            </select><br>
+            <button type='submit'>Convert</button>
+        </form>
+    </div>
+    {% endif %}
+</body>
+</html>

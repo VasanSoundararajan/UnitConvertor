@@ -1,0 +1,66 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <title>Temperature Converter</title>
+  <link rel="stylesheet" href="{% static 'style.css' %}">
+  <script>
+    function update(sel, tar) {
+        const targ = document.getElementById(tar);
+        const option = targ.options;
+        for (let i = 0; i < option.length; i++) {
+            option[i].disabled = (option[i].value === sel);
+        }
+    }
+    function fromhandleChange() {
+        const frm = document.getElementById('from').value;
+        update(frm, 'to');
+    }
+    function tohandleChange() {
+        const frm = document.getElementById('to').value;
+        update(frm, 'from');
+    }
+  </script>
+</head>
+<body>
+    <ul class="top">
+        <li><a href="{% url 'length' %}" class="active">Length</a></li>
+        <li><a href="{% url 'temperature' %}">Temperature</a></li>
+        <li><a href="{% url 'weight' %}">Weight</a></li>
+    </ul>
+    <h2 class="title">Weight Converter</h2>
+    {% if result %}
+    <div class='result'>
+        <p>Result: {{ result }} {{ unit }}</p>
+        <a class="reset" href="{% url 'weight' %}">Reset</a>
+    </div>
+    {% elif error_message %}
+    <div class='error'>
+        <p>Error: {{ error_message }}</p>
+        <a class="reset" href="{% url 'temperature' %}">Reset</a>
+    </div>
+    {% else %}
+    <div class='input'>
+        <form method='post'>
+            {% csrf_token %}
+            <label>Value:</label>
+            <input type='text' id='tem' name='tem' placeholder="Enter Value" required><br>
+            <label>From:</label>
+            <select id="from" name="from" onchange="fromhandleChange()">
+                <option value="" disabled selected>Select unit to convert from</option>
+                <option value="gram">G</option>
+                <option value="kilo">Kg</option>
+            </select><br>
+            <label>To:</label>
+            <select id="to" name="to" onchange="tohandleChange()">
+                <option value="" disabled selected>Select unit to convert from</option>
+                <option value="gram">G</option>
+                <option value="kilo">Kg</option>
+            </select><br>
+            <button type='submit'>Convert</button>
+        </form>
+    </div>
+    {% endif %}
+</body>
+</html>
